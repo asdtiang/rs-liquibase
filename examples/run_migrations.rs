@@ -6,6 +6,7 @@ use std::path::Path;
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // 1. 定义一个本地 SQLite 数据库文件
+    //cargo run --example run_migrations
     let db_path = "test_database.db";
     let db_url = format!("sqlite://{}?mode=rwc", db_path);
 

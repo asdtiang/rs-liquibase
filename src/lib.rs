@@ -123,11 +123,17 @@ impl Liquibase {
                     // 获取处理后的 SQL 语句数组
                     let statements = self.split_sql_by_line(&cs.sql);
 
-                    for sql in statements {
-                        sqlx::query(&sql)
+                    // process_child_file 函数内部循环处
+                    for (i, sql) in statements.iter().enumerate() {
+                        sqlx::query(sql)
                             .execute(&mut *tx)
                             .await
-                            .with_context(|| format!("Execution failed in {}: \n{}", cs.id, sql))?;
+                            .with_context(|| {
+                                format!(
+                                    "FAILED at statement #{} in changeSet '{}' (author: {}):\nSQL: {}",
+                                    i + 1, cs.id, cs.author, sql
+                                )
+                            })?;
                     }
 
                     // 记录历史

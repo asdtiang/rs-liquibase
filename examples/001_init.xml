@@ -8,7 +8,7 @@
             );
 
             -- 插入测试数据
-            INSERT INTO test_user (id, name) VALUES (1, 'Abel');
+            INSERT INTO test_user (id, name，a) VALUES (1, 'Abel');
             INSERT INTO test_user (id, name) VALUES (2, 'Gemini');
         </sql>
     </changeSet>
