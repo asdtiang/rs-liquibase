@@ -37,25 +37,35 @@ INSERT INTO users VALUES (1, 'Gemini');
    在你的 Cargo.toml 中添加：
 
 Ini, TOML
+```toml
 [dependencies]
-rs-liquibase = { git = "https://your-repo/rs-liquibase.git" }
-sqlx = { version = "0.7", features = ["sqlite", "runtime-tokio-native-tls"] }
+rs-liquibase = { git = "https://github.com/asdtiang/rs-liquibase.git" }
+sqlx = { version = "0.7", features = [
+    "runtime-tokio-native-tls", 
+    "any",      # 必须开启 any 
+    "mysql",
+    "postgres", 
+    "sqlite"
+] }
+```
+注意选择适合自己的数据库类型。
 在 Rust 代码中执行迁移：
 
-Rust
+```Rust
 use rs_liquibase::Liquibase;
 use sqlx::any::AnyPoolOptions;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-sqlx::any::install_default_drivers();
-let pool = AnyPoolOptions::new().connect("sqlite://test.db?mode=rwc").await?;
+    sqlx::any::install_default_drivers();
+    let pool = AnyPoolOptions::new().connect("sqlite://test.db?mode=rwc").await?;
 
     let lb = Liquibase::new(pool);
     lb.run("migrations/master.xml").await?;
     
     Ok(())
 }
+```
 🛠️ 技术实现细节
 SQL 智能清洗逻辑
 为了解决某些数据库驱动无法一次性执行多条语句的问题，rs-liquibase 会对 <sql> 标签内容进行以下处理：
