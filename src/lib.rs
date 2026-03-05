@@ -102,7 +102,7 @@ impl Liquibase {
             let current_checksum = self.calculate_checksum(&cs.sql);
 
             let record =
-                sqlx::query("SELECT MD5SUM FROM DATABASECHANGELOG WHERE ID = $1 AND AUTHOR = $2")
+                sqlx::query("SELECT MD5SUM FROM DATABASECHANGELOG WHERE ID = ? AND AUTHOR = ? ")
                     .bind(&cs.id)
                     .bind(&cs.author)
                     .fetch_optional(&self.pool)
@@ -131,7 +131,7 @@ impl Liquibase {
                     }
 
                     // 记录历史
-                    sqlx::query("INSERT INTO DATABASECHANGELOG (ID, AUTHOR, FILENAME, MD5SUM) VALUES ($1, $2, $3, $4)")
+                    sqlx::query("INSERT INTO DATABASECHANGELOG (ID, AUTHOR, FILENAME, MD5SUM) VALUES (?, ?, ?, ?)")
                         .bind(&cs.id)
                         .bind(&cs.author)
                         .bind(file_path)
