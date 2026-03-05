@@ -66,6 +66,33 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 ```
+
+RBatis集成
+
+```rust
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    let db_url = "mysql://root:123456@localhost:3306/mydb";
+
+    // --- 第一步：使用 rs-liquibase 确保数据库版本正确 ---
+    sqlx::any::install_default_drivers();
+    let migrate_pool = sqlx::AnyPool::connect(db_url).await?;
+    let lb = rs_liquibase::Liquibase::new(migrate_pool);
+    lb.run("migrations/master.xml").await?; 
+    println!("✅ 数据库迁移完成");
+
+    // --- 第二 step：初始化 RBatis 进行业务开发 ---
+    let rb = RBatis::new();
+    // RBatis 内部会自动根据 URL 初始化它需要的底层驱动（通常也是 SQLx）
+    rb.init(sqlx::mysql::MySqlDriver {}, db_url)?;
+    println!("🚀 RBatis 已就绪");
+
+    // 此时你可以放心地使用 rb.query(...) 了，因为表肯定已经存在
+    Ok(())
+}
+```
+
+
 🛠️ 技术实现细节
 SQL 智能清洗逻辑
 为了解决某些数据库驱动无法一次性执行多条语句的问题，rs-liquibase 会对 <sql> 标签内容进行以下处理：
