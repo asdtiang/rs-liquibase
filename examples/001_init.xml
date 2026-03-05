@@ -1,0 +1,15 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog">
+    <changeSet id="abel-lee-2026-03-05-001" author="abel.lee">
+        <sql>
+            CREATE TABLE IF NOT EXISTS test_user (
+            id INTEGER PRIMARY KEY,
+            name TEXT
+            );
+
+            -- 插入测试数据
+            INSERT INTO test_user (id, name) VALUES (1, 'Abel');
+            INSERT INTO test_user (id, name) VALUES (2, 'Gemini');
+        </sql>
+    </changeSet>
+</databaseChangeLog>
